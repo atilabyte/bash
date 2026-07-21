@@ -1,0 +1,91 @@
+
+
+#essa epecificacao  nao e  uma verdade absoluta mais sim
+
+#uma  experiencia  de  varias horas progamando   
+
+#progamas  q  tinham como objetivo  ser pesistente  
+
+#ser resiliente e  o mais importante  fazer  oq era pra fazer  desde o inicio   
+ 
+# uma das coisas mais importante de um progama   e  ter  mais  de  1  
+
+#funcao / jeito   para  fazer a mesma coisa  
+
+# exemplo  se voce  for verifica se um progama esta  em execucao no systema  
+
+# dentro de um script  voce  nao fara  apenas  de um jeito  voce fara de 2 ou 
+
+#mais  jeitos de fazer
+
+
+#um script robusto  sempre  pensa  no que pode da errado  ele nunca
+
+
+#pode acha q vai da certo de primeira  isso nao existe em producao nao na maioria das vezes
+
+#segue abaixo  um 
+
+
+#exempĺo  de uma  verificaco  nota  6  em bash 
+
+
+#obs  6   nao e baixo mais da pra melhorar
+
+
+#nesse  exemplo  o script  tenta verifica  se o arquivo  e um ELF valido
+ 
+
+#muitos usariam  o  utilitario file   mais 
+
+
+#usar apenas o file nao e  a forma  mais  segura porque  ele 
+
+
+#pode nao ta instalado no systema  alvo
+
+
+ 
+bash script
+
+elf=0
+
+out=$(  file  file.elf )
+
+
+for  f  in $out ; do   
+
+ if  [[ $f = 'ELF' ]] ;   then
+   
+   elf=1
+
+      fi;
+done 
+
+# elf is   1 or 0
+
+#042577
+
+octal=$(   od file.elf  | head -n  1 )
+ 
+for   oc in $octal ; do
+
+
+    if [ $oc -eq  042577 ] ; then 
+     
+       elf=$(( $elf + 1 )) #more verification
+
+
+        fi;
+
+done     
+
+
+
+
+
+
+
+
+
+
