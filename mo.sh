@@ -6,41 +6,55 @@ execute_vkzmn() {
 echo executando vkzmn
 
 
-exit
 
 
 
 }
-
 
 
 
 
 #############################################################
 
+
 check_file() {
+
+
 
 #chek vkzmn  is instaledd in /tmp
 
 
-ls /tmp/vkzmn   
+ls  /tmp/vkzmn   
 
+
+ 
 if (( $? )) ; then
 
+
 echo vkzmn not found
+
 
 check_wget_curl 
 
 
+
 else 
+
+
 
 echo  vkzmn ja esta em /tmp
 
+
 magic
+
+
 
 fi ; 
 
+
 }
+
+
 
 
 #############################################################
@@ -51,37 +65,94 @@ magic() {  #check  if file is  ELF
 
 
 
+command -v file
+
+
+if ((  $? )) ; then #if  last err not 0 file not found
+
+
+echo using od  to verify   magic header
+
+exit
+
+fi;
+
+
+
+
 elf=0
 
-hex_dump_vkzmn=$(file  /tmp/vkzmn)
 
-for h in $hex_dump_vkzmn ; do
 
-echo $h
+
+file_vkzmn=$(file  /tmp/vkzmn)
+
+
+
+for h in $file_vkzmn ; do
 
 
 if [[ $h  =  "ELF" ]] ; then
 
+
 elf=1
 
-else 
-
-echo "" #nao e um elf valido
 
 fi ;
 
 done
 
-if (( $elf )) ; then
+
+
+
+#mais uma checagem  
+
+
+   
+hex=$( od    /tmp/vkzmn | head -n  1  )
+
+
+for x in $hex ; do
+
+
+
+#octal num 042577
+ 
+
+
+if [ $x -eq  '042577' ] ; then
+
+
+elf=$((  $elf  +   1   ))
+
+
+fi;
+
+done
+
+
+
+
+if [  $elf  -eq 2  ]  ; then
 
 echo e um elf valido
 
 execute_vkzmn
 
+else 
+
+echo nao e um elf valido
+
 fi;
+
+exit
 
 
 }
+
+
+
+
 
 
 
@@ -99,11 +170,6 @@ check_file
 
 
 }
-
-
-
-
-
 
 
 
@@ -169,9 +235,81 @@ fi;
 # -------------------------------------------
 
 
-
-
 main() {
+
+
+vkzmn_ok=0
+
+
+
+
+#simple verification
+
+
+
+command -v pgrep 
+
+
+if (( $? )) ; then #if last err not 0 pgrep not instaled
+
+echo pgrep not instaled
+ 
+exit
+
+
+fi;
+
+
+
+if  [  $? -eq  0 ]  ; then 
+
+
+echo pgrep instaled
+
+pgrep vkzmn
+
+
+if  [  $? -eq   1 ]  ; then    #vkzmn not in execution
+
+vkzmn_ok=1
+
+fi ;
+
+
+
+if (( $vkzmn_ok )) ; then 
+
+
+echo vkzmn nao esta em execucao
+
+
+check_file 
+
+
+
+fi ;
+
+
+
+
+fi;
+
+
+
+
+
+
+
+
+
+
+echo main em manutencao
+
+exit
+
+
+
+#complex verification
 
 
 true=1000
